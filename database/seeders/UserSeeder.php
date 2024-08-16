@@ -21,5 +21,15 @@ class UserSeeder extends Seeder
             'balance' => '0',
             'address' => '123 Main St',
         ]);
+
+        User::create([
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+            'phone_number' => '081234567891',
+            'pin' => '123456',
+            'balance' => '0',
+            'address' => '123 Main St',
+            'token' => 'janedoe_token'
+        ]);
     }
 }

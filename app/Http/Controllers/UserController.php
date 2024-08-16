@@ -19,7 +19,7 @@ class UserController extends Controller
     public function register(UserRegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
-        if(User::where('phone_number', $data['phone_number'])->count() == 1) {
+        if (User::where('phone_number', $data['phone_number'])->count() == 1) {
             throw new HttpResponseException(response(['errors' => ['phone_number' => ['The Phone Number field has already been taken.']]], 422));
         }
 
@@ -37,7 +37,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $user = User::where('phone_number', $data['phone_number'])->first();
-        if(!$user || $user->pin != $data['pin']) {
+        if (!$user || $user->pin != $data['pin']) {
             throw new HttpResponseException(response(['errors' => ['message' => ['Invalid phone number or pin']]], 401));
         }
 
@@ -49,4 +49,37 @@ class UserController extends Controller
         ])->setStatusCode(201);
     }
 
+    public function get(): UserResource
+    {
+        $user = Auth::user();
+        return new UserResource($user);
+    }
+
+    public function update(UserUpdateRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $user = Auth::user();
+        $user = User::find($user->id);
+        $user->first_name = $data['first_name'];
+        $user->last_name = $data['last_name'];
+        $user->pin = $data['pin'];
+        $user->address = $data['address'];
+
+        $user->save();
+        return response()->json([
+            'status' => 'SUCCESS',
+            'result' => new UserResource($user),
+        ])->setStatusCode(200);
+    }
+
+    public function logout(): JsonResponse
+    {
+        $user = Auth::user();
+        $user = User::find($user->id);
+        $user->token = null;
+        $user->save();
+        return response()->json([
+            'data' => 'true'
+        ])->setStatusCode(200);
+    }
 }
