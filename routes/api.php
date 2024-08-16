@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TransferController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\ApiAuthMiddleware;
 
 
@@ -21,4 +22,5 @@ Route::group(['middleware' => ApiAuthMiddleware::class], function () {
     Route::post('/topup', [TopupController::class, 'topup']);
     Route::post('/payment', [PaymentController::class, 'payment']);
     Route::post('/transfer', [TransferController::class, 'transfer']);
+    Route::get('/transaction', [TransactionController::class, 'transaction']);
 });
