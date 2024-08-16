@@ -13,11 +13,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('topups', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id');
-            $table->string('amount');
-            $table->string('balance_before');
-            $table->string('balance_after');
+            $table->unsignedBigInteger('amount');
+            $table->unsignedBigInteger('balance_before');
+            $table->unsignedBigInteger('balance_after');
             $table->timestamps();
         });
     }

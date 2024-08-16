@@ -3,64 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Topup;
+use App\Models\User;
+use App\Http\Resources\TopupResource;
 use App\Http\Requests\StoreTopupRequest;
-use App\Http\Requests\UpdateTopupRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
+
 
 class TopupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function topup(StoreTopupRequest $request): JsonResponse
     {
-        //
-    }
+        $data = $request->validated();
+        $user = Auth::user();
+        $user = User::find($user->id);
+        $balanceBefore = $user->balance;
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $user->balance += $data['amount'];
+        $user->save();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTopupRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Topup $topup)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Topup $topup)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTopupRequest $request, Topup $topup)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Topup $topup)
-    {
-        //
+        $topupData = [
+            'user_id' => $user->id,
+            'amount' => $data['amount'],
+            'balance_before' => $balanceBefore,
+            'balance_after' => $user->balance,
+        ];
+        $topup = Topup::create($topupData);
+        return response()->json([
+            'status' => 'SUCCESS',
+            'result' => new TopupResource($topup),
+        ])->setStatusCode(200);
     }
 }

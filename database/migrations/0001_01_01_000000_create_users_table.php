@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('last_name', 100);
             $table->string('phone_number', 13)->unique();
             $table->string('pin', 6);
-            $table->string('balance')->default('0');
+            $table->unsignedBigInteger('balance')->default(0);
             $table->string('address', 255)->nullable(true);
             $table->string('token', 100)->nullable(true)->unique("token_unique");
             $table->timestamps();

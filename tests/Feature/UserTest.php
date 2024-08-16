@@ -29,7 +29,7 @@ class UserTest extends TestCase
                     "last_name" => "Doe",
                     "phone_number" => "081234567890",
                     "pin" => "123456",
-                    "balance" => "0",
+                    "balance" => 0,
                     "address" => "123 Main St"
                 ]
             ]);
@@ -147,7 +147,7 @@ class UserTest extends TestCase
                     "last_name" => "Doe",
                     "phone_number" => "081234567891",
                     "pin" => "123456",
-                    "balance" => "0",
+                    "balance" => 0,
                     "address" => "123 Main St"
                 ]
             ]);
@@ -199,7 +199,7 @@ class UserTest extends TestCase
                     "last_name" => "Doe",
                     "phone_number" => "081234567891",
                     "pin" => "654321",
-                    "balance" => "0",
+                    "balance" => 0,
                     "address" => "123 Main St"
                 ]
             ]);
@@ -239,6 +239,34 @@ class UserTest extends TestCase
                 'errors' => [
                     'pin' => [
                         'The PIN field must be at least 6 characters.'
+                    ]
+                ]
+            ]);
+    }
+
+    public function testLogoutSuccess(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $this->delete(uri: '/api/logout', headers: [
+            'Authorization' => 'janedoe_token'
+        ])->assertStatus(200)
+            ->assertJson([
+                'data' => 'true'
+            ]);
+        $user = User::where('phone_number', '081234567891')->first();
+        self::assertNull($user->token);
+    }
+    public function testLogoutUnauthorized(): void
+    {
+        $this->seed([UserSeeder::class]);
+        $this->delete(uri: '/api/logout', headers: [
+            'Authorization' => 'invalid_token'
+        ])
+            ->assertStatus(401)
+            ->assertJson([
+                'errors' => [
+                    'message' => [
+                        'Unauthorized'
                     ]
                 ]
             ]);

@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transfers', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id');
             $table->foreignId('target_user_id');
-            $table->string('amount');
+            $table->unsignedBigInteger('amount');
             $table->string('remarks', 100);
-            $table->string('balance_before');
-            $table->string('balance_after');
+            $table->unsignedBigInteger('balance_before');
+            $table->unsignedBigInteger('balance_after');
             $table->timestamps();
         });
     }

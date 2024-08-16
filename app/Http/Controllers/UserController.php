@@ -10,7 +10,6 @@ use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +22,7 @@ class UserController extends Controller
             throw new HttpResponseException(response(['errors' => ['phone_number' => ['The Phone Number field has already been taken.']]], 422));
         }
 
-        $data['balance'] = '0';
+        $data['balance'] = 0;
 
         $user = new User($data);
         $user->save();
