@@ -3,64 +3,57 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transfer;
-use App\Http\Requests\StoreTransferRequest;
-use App\Http\Requests\UpdateTransferRequest;
+use App\Models\User;
+use App\Http\Resources\TransferResource;
+use App\Http\Requests\StoretransferRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TransferController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function transfer(StoreTransferRequest $request): JsonResponse
     {
-        //
-    }
+        $data = $request->validated();
+        $user = Auth::user();
+        $user = User::find($user->id);
+        $balanceBefore = $user->balance;
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        if ($balanceBefore < $data['amount']) {
+            throw new HttpResponseException(
+                response()->json([
+                    'message' => 'Insufficient balance for this transfer.',
+                ], 400)
+            );
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreTransferRequest $request)
-    {
-        //
-    }
+        $targetUser = User::find($data['target_user_id']);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Transfer $transfer)
-    {
-        //
-    }
+        if (!$targetUser){
+            throw new HttpResponseException(
+                response()->json([
+                    'message' => 'Recipient not found.',
+                ], 400)
+            );
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transfer $transfer)
-    {
-        //
-    }
+        $user->balance -= $data['amount'];
+        $user->save();
+        $targetUser->balance += $data['amount'];
+        $targetUser->save();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateTransferRequest $request, Transfer $transfer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transfer $transfer)
-    {
-        //
+        $transferData = [
+            'user_id' => $user->id,
+            'target_user_id' => $data['target_user_id'],
+            'amount' => $data['amount'],
+            'remarks' => $data['remarks'],
+            'balance_before' => $balanceBefore,
+            'balance_after' => $user->balance,
+        ];
+        $transfer = transfer::create($transferData);
+        return response()->json([
+            'status' => 'SUCCESS',
+            'result' => new TransferResource($transfer),
+        ])->setStatusCode(200);
     }
 }

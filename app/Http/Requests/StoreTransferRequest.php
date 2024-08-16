@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreTransferRequest extends FormRequest
 {
@@ -22,7 +24,13 @@ class StoreTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'target_user_id' => 'required|string',
+            'amount' => 'required|numeric',
+            'remarks' => 'required|string'
         ];
+    }
+
+    protected function failedValidation (Validator $validator) {
+        throw new HttpResponseException(response(['errors' => $validator->getMessageBag()], 422));
     }
 }
