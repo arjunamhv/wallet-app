@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasUuids;
-    protected $table = 'books';
+    protected $table = 'payments';
     protected $primaryKey = 'id';
     protected $keyType = 'uuid';
     public $timestamps = true;

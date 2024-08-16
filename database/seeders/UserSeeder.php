@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             'last_name' => 'Doe',
             'phone_number' => '081234567890',
             'pin' => '123456',
-            'balance' => '0',
+            'balance' => 0,
             'address' => '123 Main St',
         ]);
 
@@ -27,9 +27,19 @@ class UserSeeder extends Seeder
             'last_name' => 'Doe',
             'phone_number' => '081234567891',
             'pin' => '123456',
-            'balance' => '0',
+            'balance' => 0,
             'address' => '123 Main St',
             'token' => 'janedoe_token'
+        ]);
+
+        User::create([
+            'first_name' => 'marry',
+            'last_name' => 'jane',
+            'phone_number' => '081234567892',
+            'pin' => '123456',
+            'balance' => 200000,
+            'address' => '123 Main St',
+            'token' => 'marryjane_token'
         ]);
     }
 }

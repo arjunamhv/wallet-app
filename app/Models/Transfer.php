@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
-class transfer extends Model
+class Transfer extends Model
 {
     use HasUuids;
     protected $table = 'transfers';

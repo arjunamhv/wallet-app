@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TopupController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\ApiAuthMiddleware;
 
 
@@ -17,4 +18,5 @@ Route::group(['middleware' => ApiAuthMiddleware::class], function () {
 
 
     Route::post('/topup', [TopupController::class, 'topup']);
+    Route::post('/payment', [PaymentController::class, 'payment']);
 });
